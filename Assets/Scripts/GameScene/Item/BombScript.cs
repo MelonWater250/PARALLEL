@@ -18,6 +18,9 @@ namespace Item
         //停止
         public void StopMove() { _isMove = false; }
 
+        //カウントダウン中か
+        public bool IsCountdown { set; get; } = false;
+
         //爆発済か
         private bool _isExploded = false;
         public bool IsExploded() { return _isExploded; }
@@ -107,12 +110,16 @@ namespace Item
             float time = _lifeTime;
             while (time > 0)
             {
-                //スケール拡大
-                transform.localScale = Vector3.Lerp(_bombScale, _defaultScale, time / _lifeTime);
-                //カラー変更
-                _bodyMeshRenderer.material.color = Color.Lerp(_bombColor, _defaultColor, time / _lifeTime);
+                //カウントダウン中なら処理
+                if (IsCountdown == false)
+                {
+                    //スケール拡大
+                    transform.localScale = Vector3.Lerp(_bombScale, _defaultScale, time / _lifeTime);
+                    //カラー変更
+                    _bodyMeshRenderer.material.color = Color.Lerp(_bombColor, _defaultColor, time / _lifeTime);
 
-                time -= Time.deltaTime;
+                    time -= Time.deltaTime;
+                }
                 yield return null;
             }
             StartCoroutine(ExplosionItemCol());
@@ -149,7 +156,7 @@ namespace Item
         private IEnumerator MoveItemCol(GameObject targetObj)
         {
             _isMove = true;
-            while (CanMove() && GameManager.Instance.IsGame())
+            while (CanMove() && GameManager.Instance.IsGame() && _isMove == true)
             {
                 Vector3 targetPos = targetObj.transform.position - transform.position;
                 _rb.AddForce(targetPos.normalized * _localGravity, ForceMode.Acceleration);
@@ -208,7 +215,8 @@ namespace Item
 
             if (other.tag == TagContainer.PLANET_TAG)
             {
-                StartCoroutine(ExplosionItemCol());
+                
+                //StartCoroutine(ExplosionItemCol());
                 //PlanetManager planet = other.GetComponent<PlanetManager>();
 
                 ////相手の惑星なら
@@ -224,6 +232,8 @@ namespace Item
         {
             if(collision.gameObject.tag == TagContainer.PLANET_TAG)
             {
+                //カウントダウン開始
+                IsCountdown = true;
                 StopMove();
             }
         }

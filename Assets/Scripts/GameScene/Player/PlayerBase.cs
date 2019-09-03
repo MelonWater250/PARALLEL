@@ -103,6 +103,8 @@ namespace Player
                     bool canPull = (item.CanMove() && item.IsMine(_playerNum));
                     if (canPull && CanCarry())
                     {
+                        //カウントダウン停止
+                        item.IsCountdown = false;
                         PullItem(item);
                     }
                     break;

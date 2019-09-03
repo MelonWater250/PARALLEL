@@ -4732,7 +4732,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 25eefb502a14b7a45b9eb0d877542af5, type: 2}
+  - {fileID: 2100000, guid: 842cf9a9a3e6b9f44b64f584ca96e241, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -4843,7 +4843,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8035354581011680440}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: bf237ed70d9d8634aad67ed64f08b2b2, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

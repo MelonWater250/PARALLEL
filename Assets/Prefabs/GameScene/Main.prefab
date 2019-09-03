@@ -114,7 +114,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265235359943457055}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 5
@@ -135,24 +135,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &165859103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5071682109581213839}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba6af5eaa8d821f4e93093fd37ee3484, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_Version: 2
 --- !u!1001 &1265235359225325302
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -328,24 +310,20 @@ PrefabInstance:
     - target: {fileID: 6335782763140521153, guid: fb0279f855bd02541a5dd5f98bde4036,
         type: 3}
       propertyPath: m_NormalizedViewPortRect.width
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6335782763140521153, guid: fb0279f855bd02541a5dd5f98bde4036,
         type: 3}
       propertyPath: m_TargetTexture
       value: 
       objectReference: {fileID: 8400000, guid: 84b00cba8e5c59c428433209de20b212, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1889915160, guid: fb0279f855bd02541a5dd5f98bde4036, type: 3}
+    - {fileID: 1889915161, guid: fb0279f855bd02541a5dd5f98bde4036, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: fb0279f855bd02541a5dd5f98bde4036, type: 3}
 --- !u!4 &5071682109581384873 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6335782763141006021, guid: fb0279f855bd02541a5dd5f98bde4036,
-    type: 3}
-  m_PrefabInstance: {fileID: 1265235359770173036}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5071682109581213839 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6335782763141504739, guid: fb0279f855bd02541a5dd5f98bde4036,
     type: 3}
   m_PrefabInstance: {fileID: 1265235359770173036}
   m_PrefabAsset: {fileID: 0}
