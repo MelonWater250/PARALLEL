@@ -84,6 +84,9 @@ namespace Item
         [SerializeField, Tooltip("爆発にかかる時間")]
         private float _explosionTime = 3.0f;
 
+        [SerializeField, Tooltip("移動中のパーティクル")]
+        private ParticleSystem _movingParticle = null;
+
         //加速度
         private float _defaultAcceleration = 9.8f;
 
@@ -103,6 +106,9 @@ namespace Item
             _isMove = false;
             _isExploded = false;
             _rb = GetComponent<Rigidbody>();
+
+            //移動中のエフェクト停止
+            _movingParticle.Stop();
         }
 
         private void Start()
@@ -115,9 +121,15 @@ namespace Item
             _defaultAcceleration = Physics.gravity.magnitude;
             _rb = GetComponent<Rigidbody>();
 
+            //移動中のエフェクト停止
+            _movingParticle.Stop();
+
             StartCoroutine(CountDown());
         }
-
+        private void Update()
+        {
+            Debug.Log(name + _movingParticle.IsAlive());
+        }
         //爆発のカウントダウン
         private IEnumerator CountDown()
         {
@@ -160,14 +172,21 @@ namespace Item
         private IEnumerator MoveItemCol(GameObject targetObj, Vector3 offsetPos, float accelerator = 1.0f)
         {
             _isMove = true;
+
+            //移動中のエフェクト開始
+            _movingParticle.Play();
+
             while (CanMove() && GameManager.Instance.IsGame() && _isMove == true)
             {
                 Debug.Log(name + targetObj.name);
                 Vector3 targetPos = targetObj.transform.position - transform.position +offsetPos;
-                _rb.AddForce(targetPos.normalized * _defaultAcceleration *accelerator, ForceMode.Acceleration);
+                _rb.AddForce(targetPos.normalized * _defaultAcceleration * accelerator, ForceMode.Acceleration);
                 yield return new WaitForFixedUpdate();
                 //yield return null;
             }
+
+            //移動中のエフェクト停止
+            _movingParticle.Stop();
         }
 
         /// <summary>

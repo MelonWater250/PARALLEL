@@ -28,7 +28,7 @@ namespace Item
 
         private void Start()
         {
-            InstantiateItem();
+            //InstantiateItem();
         }
 
         //生成＆管理用リスト追加

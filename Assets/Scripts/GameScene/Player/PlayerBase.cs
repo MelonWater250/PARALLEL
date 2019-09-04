@@ -42,14 +42,8 @@ namespace Player
         //球面移動の中心点
         protected PlanetManager _planetManager;
 
-        [SerializeField, Tooltip("アイテムを引き寄せるピボットの相対位置")]
-        protected Vector3 _pullPivotOffset = new Vector3(0, -0.1f, 0);
-
         [SerializeField, Tooltip("アイテムを引き寄せるスピード(倍)")]
         protected float _accelerator = 3.0f;
-
-        [SerializeField, Tooltip("アイテムを渡すピボットの相対位置")]
-        protected Vector3 _throwPivotOffset = new Vector3(0, 0.2f, 0);
 
         [SerializeField, Tooltip("ブラックホールの位置")]
         protected GameObject[]  _blackHoles;
@@ -93,49 +87,22 @@ namespace Player
         //ライトの当たり判定
         protected virtual void OnTriggerEnter(Collider other)
         {
-            //引き寄せ可能なアイテムなら引き寄せる
+            //引き寄せ可能なアイテムなら近いほうのブラックホールまで飛ばす
             if (other.tag == TagContainer.ITEM_TAG)
             {
                 ItemScript item = other.GetComponent<ItemScript>();
                 bool canPull = (item.CanMove() && item.IsMine(_playerNum));
                 if (canPull)
                 {
-                    PullItem(item);
+                    //近いほうのブラックホールを算出
+                    float bh1_distance = Vector3.Magnitude(_blackHoles[0].transform.position - transform.position);
+                    float bh2_distance = Vector3.Magnitude(_blackHoles[1].transform.position - transform.position);
+
+                    int nearBlackHoleIndex = bh1_distance <= bh2_distance ? 0 : 1;
+                    //アイテムを飛ばす
+                    ThrowItem(item, _blackHoles[nearBlackHoleIndex]);
                 }
             }
-        }
-
-        //本体の当たり判定
-        protected virtual void OnCollisionEnter(Collision collision)
-        {
-            //アイテムなら近いほうのブラックホールまで飛ばす
-            if (collision.gameObject.tag == TagContainer.ITEM_TAG)
-            {
-                ItemScript item = collision.gameObject.GetComponent<ItemScript>();
-                //停止
-                item.StopMove();
-
-                //近いほうのブラックホールを算出
-                float bh1_distance = Vector3.Magnitude(_blackHoles[0].transform.position - transform.position);
-                float bh2_distance = Vector3.Magnitude(_blackHoles[1].transform.position - transform.position);
-                
-                int nearBlackHoleIndex = bh1_distance <= bh2_distance ? 0 : 1;
-                //アイテムを飛ばす
-                ThrowItem(item, _blackHoles[nearBlackHoleIndex]);
-            }
-        }
-
-        /// <summary>
-        /// アイテム引き寄せ
-        /// </summary>
-        /// <param name="item">アイテム</param>
-        protected virtual void PullItem(ItemScript item)
-        {
-            //アイテム引き寄せ
-            item.MoveItem(gameObject, _pullPivotOffset, _accelerator);
-
-            //縮小
-            item.ShrinkItem();
         }
 
         /// <summary>
@@ -145,10 +112,7 @@ namespace Player
         /// <param name="target">発射先</param>
         protected virtual void ThrowItem(ItemScript item,GameObject target)
         {
-            item.transform.position = transform.position + _throwPivotOffset;
-            item.MoveItem(target);
-            //拡大
-            item.ExpandingItem();
+            item.MoveItem(target, accelerator: _accelerator);
         }
     }
 }

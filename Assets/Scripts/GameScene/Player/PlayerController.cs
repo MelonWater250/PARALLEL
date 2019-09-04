@@ -59,11 +59,5 @@ namespace Player
         {
             base.OnTriggerEnter(other);
         }
-
-        //本体の接触判定
-        protected override void OnCollisionEnter(Collision collision)
-        {
-            base.OnCollisionEnter(collision);
-        }
     }
 }
