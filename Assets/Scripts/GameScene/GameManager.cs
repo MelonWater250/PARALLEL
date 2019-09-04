@@ -8,10 +8,10 @@ using Item;
 public class GameManager : SingletonMonoBehaviour<GameManager>
 { 
     [SerializeField, Tooltip("惑星(1P)")]
-    private PlanetManager _planetManager_1;
+    private PlanetManager _planetManager_1 = null;
 
     [SerializeField, Tooltip("惑星(2P)")]
-    private PlanetManager _planetManager_2;
+    private PlanetManager _planetManager_2 = null;
     
     //ゲーム中か
     public bool IsGame() { return _planetManager_1.IsAlive() && _planetManager_2.IsAlive(); }

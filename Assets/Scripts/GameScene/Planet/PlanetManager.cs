@@ -6,7 +6,7 @@ using Item;
 namespace Planet
 {
     /// <summary>
-    /// 惑星上のプレイヤーと大砲の管理、自転、相手の攻撃(アイテムに当たったときの判定)
+    /// 惑星上のプレイヤーの管理、自転、相手の攻撃(アイテムに当たったときの判定)
     /// </summary>
     public class PlanetManager : MonoBehaviour
     {
@@ -59,17 +59,16 @@ namespace Planet
         public void TakeDamage(float damage = 0)
         {
             //体力が0以下ならリターン
-            if (_nowHealth <= 0) { return; }
+            if (IsAlive() == false) { return; }
 
             //体力が0を下回るなら体力を0にする
             _nowHealth = Mathf.Max(0, _nowHealth - damage);
-
-
+            
             //カメラを揺らす
 
 
             //体力が0以下になったなら死亡
-            if (_nowHealth <= 0) { ExplodePlanet(); }
+            if (IsAlive() == false) { ExplodePlanet(); }
         }
 
         /// <summary>

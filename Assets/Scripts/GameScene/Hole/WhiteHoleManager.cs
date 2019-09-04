@@ -6,8 +6,9 @@ using DG.Tweening;
 
 namespace Hole
 {
-    public class WhiteHoleManager : SingletonMonoBehaviour<WhiteHoleManager>
+    public class WhiteHoleManager : MonoBehaviour
     {
+        //発射中か
         private bool _isFire = false;
         public bool IsFire() { return _isFire; }
 
@@ -16,13 +17,14 @@ namespace Hole
         [SerializeField, Tooltip("発射の時間間隔")]
         private float _fireIntervalTime = 0.5f;
 
+        //初期のスケール
         private Vector3 _baseScale = new Vector3();
 
         [SerializeField, Tooltip("拡大縮小にかかる時間")]
         private float _scalingTime = 2.0f;
 
-        [SerializeField, Tooltip("最初にアイテムを生成する数")]
-        private int _firstFireNum = 5;
+        //[SerializeField, Tooltip("最初にアイテムを生成する数")]
+        //private int _firstFireNum = 5;
 
         private void Start()
         {
@@ -37,7 +39,7 @@ namespace Hole
         /// </summary>
         /// <param name="items">アイテムの配列</param>
         /// <param name="target">発射先</param>
-        public void Fire(BombScript item, GameObject target)
+        public void Fire(ItemScript item, GameObject target)
         {
             //発射先を向いて、パーティクル再生、拡大して発射
             _isFire = true;
@@ -47,7 +49,7 @@ namespace Hole
                 .OnComplete(() => StartCoroutine(FireCol(item, target)));
         }
 
-        private IEnumerator FireCol(BombScript item, GameObject target)
+        private IEnumerator FireCol(ItemScript item, GameObject target)
         {
             item.transform.position = transform.position;
             item.transform.up = (transform.position - target.transform.position).normalized;

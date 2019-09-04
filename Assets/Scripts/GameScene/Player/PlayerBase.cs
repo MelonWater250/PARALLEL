@@ -7,6 +7,9 @@ using Item;
 
 namespace Player
 {
+    /// <summary>
+    /// 移動・回転、アイテムとの接触処理
+    /// </summary>
     public abstract class PlayerBase : MonoBehaviour
     {
         //プレイヤーの番号
@@ -36,29 +39,24 @@ namespace Player
         protected Vector2 moveAxis;
         protected float rotateAxis;
 
+        //球面移動の中心点
         protected PlanetManager _planetManager;
 
-        //所持中のアイテム
-        protected List<BombScript> _itemList = new List<BombScript>();
-
-        [SerializeField, Tooltip("所持できるアイテムの最大数")]
-        protected int _maxItemNum = 5;
-        protected virtual bool CanCarry() { return _maxItemNum >= _itemList.Count + 1; }
-
         [SerializeField, Tooltip("アイテムを引き寄せるピボットの相対位置")]
-        protected Vector3 _pivotOffset = new Vector3(0, -0.1f, 0);
+        protected Vector3 _pullPivotOffset = new Vector3(0, -0.1f, 0);
 
         [SerializeField, Tooltip("アイテムを引き寄せるスピード(倍)")]
         protected float _accelerator = 3.0f;
 
-            [SerializeField, Tooltip("アイテムを引き渡す時間間隔")]
-            protected float _throwIntervalTime = 0.1f;
+        [SerializeField, Tooltip("アイテムを渡すピボットの相対位置")]
+        protected Vector3 _throwPivotOffset = new Vector3(0, 0.2f, 0);
 
         [SerializeField, Tooltip("ブラックホールの位置")]
         protected GameObject[]  _blackHoles;
 
         protected virtual void Start()
         {
+            //親からPlanetManagerを探す
             _planetManager = GetComponentInParent<PlanetManager>();
         }
 
@@ -66,8 +64,8 @@ namespace Player
         /// 移動
         /// </summary>
         /// <param name="moveAxis">移動方向</param>
-        /// <param name="rotateAxis">回転方向(右回転：+)</param>
-        protected virtual void MovePlayer(Vector2 moveAxis, float rotateAxis = 0)
+        /// <param name="rotateAxis">回転方向(右回転なら+)</param>
+        protected virtual void MovePlayer(Vector2 moveAxis, float rotateAxis)
         {
             if (CanMove == false) return;
 
@@ -92,30 +90,38 @@ namespace Player
             transform.Rotate(new Vector3(0, rotateAxis * _rotateSpeed * Time.deltaTime, 0));
         }
 
-
+        //ライトの当たり判定
         protected virtual void OnTriggerEnter(Collider other)
         {
-            switch (other.tag)
+            //引き寄せ可能なアイテムなら引き寄せる
+            if (other.tag == TagContainer.ITEM_TAG)
             {
-                //アイテムなら引き寄せる
-                case TagContainer.ITEM_TAG:
-                    BombScript item = other.GetComponent<BombScript>();
-                    bool canPull = (item.CanMove() && item.IsMine(_playerNum));
-                    if (canPull && CanCarry())
-                    {
-                        //カウントダウン停止
-                        item.IsCountdown = false;
-                        PullItem(item);
-                    }
-                    break;
+                ItemScript item = other.GetComponent<ItemScript>();
+                bool canPull = (item.CanMove() && item.IsMine(_playerNum));
+                if (canPull)
+                {
+                    PullItem(item);
+                }
+            }
+        }
 
-                //大砲なら受け渡す
-                case TagContainer.CANNON_TAG:
-                    ThrowItem(other.gameObject);
-                    break;
+        //本体の当たり判定
+        protected virtual void OnCollisionEnter(Collision collision)
+        {
+            //アイテムなら近いほうのブラックホールまで飛ばす
+            if (collision.gameObject.tag == TagContainer.ITEM_TAG)
+            {
+                ItemScript item = collision.gameObject.GetComponent<ItemScript>();
+                //停止
+                item.StopMove();
 
-                default:
-                    break;
+                //近いほうのブラックホールを算出
+                float bh1_distance = Vector3.Magnitude(_blackHoles[0].transform.position - transform.position);
+                float bh2_distance = Vector3.Magnitude(_blackHoles[1].transform.position - transform.position);
+                
+                int nearBlackHoleIndex = bh1_distance <= bh2_distance ? 0 : 1;
+                //アイテムを飛ばす
+                ThrowItem(item, _blackHoles[nearBlackHoleIndex]);
             }
         }
 
@@ -123,55 +129,26 @@ namespace Player
         /// アイテム引き寄せ
         /// </summary>
         /// <param name="item">アイテム</param>
-        protected virtual void PullItem(BombScript item)
+        protected virtual void PullItem(ItemScript item)
         {
-            //リストに追加と移動
-            item.MoveItem(gameObject, _pivotOffset, _accelerator);
-            _itemList.Add(item);
-            //縮小
-            item.ShrinkItem(time: null, OnCompleteAction:
-                () =>
-                {
-                    //一番近いブラックホールを探す
-                    GameObject nearBlackHole = _blackHoles[0];
-                    for(int i=1;i<_blackHoles.Length;i++)
-                    {
-                        if(nearBlackHole.transform.position.magnitude > _blackHoles[i].transform.position.magnitude)
-                        {
-                            nearBlackHole = _blackHoles[i];
-                        }
-                    }
-                    ThrowItem(nearBlackHole);
-                });
+            //アイテム引き寄せ
+            item.MoveItem(gameObject, _pullPivotOffset, _accelerator);
 
+            //縮小
+            item.ShrinkItem();
         }
 
         /// <summary>
         /// アイテム受け渡し
         /// </summary>
-        /// <param name="target">大砲</param>
-        protected virtual void ThrowItem(GameObject target)
+        /// <param name="item">アイテム</param>
+        /// <param name="target">発射先</param>
+        protected virtual void ThrowItem(ItemScript item,GameObject target)
         {
-            if (_itemList.Count > 0)
-            {
-                List<BombScript> itemList = new List<BombScript>(_itemList);
-                _itemList.Clear();
-                StartCoroutine(ThrowItemCol(new List<BombScript>(itemList), target));
-            }
-        }
-
-        //アイテム発射
-        protected virtual IEnumerator ThrowItemCol(List<BombScript> itemList, GameObject target)
-        {
-            foreach (BombScript item in itemList)
-            {
-                item.transform.position = transform.position;
-                item.gameObject.SetActive(true);
-                item.MoveItem(target);
-                //拡大
-                item.ExpandingItem();
-                yield return new WaitForSeconds(_throwIntervalTime);
-            }
+            item.transform.position = transform.position + _throwPivotOffset;
+            item.MoveItem(target);
+            //拡大
+            item.ExpandingItem();
         }
     }
 }

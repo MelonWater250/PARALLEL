@@ -19,24 +19,25 @@ namespace Item
         private int _firstSpawnAmount = 5;
 
         [SerializeField,Tooltip("ワープマネージャー(初回アイテム生成用)")]
-        private WarpManager _warpManager_1;
+        private HoleManager _warpManager_1 = null;
         [SerializeField, Tooltip("ワープマネージャー(初回アイテム生成用)")]
-        private WarpManager _warpManager_2;
+        private HoleManager _warpManager_2 = null;
 
         //管理用リスト
-        List<BombScript> _itemBombList = new List<BombScript>();
+        private List<ItemScript> _itemBombList = new List<ItemScript>();
+
         private void Start()
         {
             InstantiateItem();
         }
 
         //生成＆管理用リスト追加
-        public void InstantiateItem()
+        private void InstantiateItem()
         {
             //生成
             for (int i = 0; i < _itemAmountBomb; i++)
             {
-                BombScript item = Instantiate(_itemBomb).GetComponent<BombScript>();
+                ItemScript item = Instantiate(_itemBomb).GetComponent<ItemScript>();
                 item.Init(i);
                 item.gameObject.SetActive(false);
                 _itemBombList.Add(item);
@@ -59,13 +60,13 @@ namespace Item
         }
 
         /// <summary>
-        /// 非表示のアイテムがあれば返す(ランダム)
+        /// 非表示(待機中)のアイテムがあれば返す
         /// </summary>
-        public BombScript IdleItem()
+        public ItemScript IdleItem()
         {
-            List<BombScript> idleItemList = new List<BombScript>();
+            List<ItemScript> idleItemList = new List<ItemScript>();
             //非表示のものを探す
-            foreach (BombScript item in _itemBombList)
+            foreach (ItemScript item in _itemBombList)
             {
                 if (item.IsActive == false)
                 {
@@ -82,7 +83,7 @@ namespace Item
         //全てのアイテムを爆発させて止める
         public void ExplosionAllItem()
         {
-            foreach (BombScript item in _itemBombList)
+            foreach (ItemScript item in _itemBombList)
             {
                 StartCoroutine(item.ExplosionItemCol());
             }

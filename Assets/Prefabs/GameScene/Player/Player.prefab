@@ -182,6 +182,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1735885217471667119}
   - component: {fileID: 1735885217471667112}
+  - component: {fileID: 1449195887833170414}
   - component: {fileID: 6814862386621417421}
   - component: {fileID: 5391688370234738403}
   m_Layer: 0
@@ -224,13 +225,25 @@ MonoBehaviour:
   _rotateSpeed: 180
   _maxTiltAngle: 3
   _tiltTime: 1
-  _maxItemNum: 5
-  _pivotOffset: {x: 0, y: -0.1, z: 0}
+  _pullPivotOffset: {x: 0, y: -0.1, z: 0}
   _accelerator: 2
-  _throwIntervalTime: 0.1
+  _throwPivotOffset: {x: 0, y: 0.2, z: 0}
   _blackHoles:
   - {fileID: 0}
   - {fileID: 0}
+--- !u!135 &1449195887833170414
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735885217471667118}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6814862386621417421
 BoxCollider:
   m_ObjectHideFlags: 0
