@@ -4826,10 +4826,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ItemID: 0
+  _attackPlayerNum: 1
   _speed: 10
   _power: 10
   _scallingTime: 0.5
-  _lifeTime: 5
+  _lifeTime: 10
   _bombScale: {x: 2, y: 2, z: 2}
   _bombColor: {r: 0.938, g: 0.20542204, b: 0.20542204, a: 1}
   _bodyMeshRenderer: {fileID: 8035354581572728492}

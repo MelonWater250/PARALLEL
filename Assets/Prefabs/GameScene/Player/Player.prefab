@@ -222,10 +222,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerObj: {fileID: 1735885215945941583}
   _moveSpeed: 45
-  _rotateSpeed: 180
+  _rotateSpeed: 270
   _maxTiltAngle: 3
   _tiltTime: 1
-  _accelerator: 2
   _blackHoles:
   - {fileID: 0}
   - {fileID: 0}

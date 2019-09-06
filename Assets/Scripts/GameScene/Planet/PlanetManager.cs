@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Item;
+using UnityEngine.UI;
+using DG.Tweening;
 
 namespace Planet
 {
@@ -10,40 +11,28 @@ namespace Planet
     /// </summary>
     public class PlanetManager : MonoBehaviour
     {
-        public int PlayerNum = 1; 
+        public int PlayerNum = 1;
 
-        //生きているか
-        [HideInInspector]
-        private bool _isAlive = true;
-        public bool IsAlive()
-        {
-            if (_nowHealth <= 0) _isAlive = false;
-            return _isAlive;
-        }
-    
         [Header("パラメーター")]
-        [SerializeField,Tooltip("惑星の初期体力")]
-        private float _maxHealth = 100;
-        //惑星の体力
-        private float _nowHealth;
+        //現在受けているダメージ量
+        private int _damage = 0;
+        public int Damage() { return _damage; }
 
         [SerializeField, Tooltip("自転速度")]
         private float _rotateSpeed = 10.0f;
 
+        [Header("UI")]
+        [SerializeField, Tooltip("受けているダメージ表示用テキスト")]
+        private Text _damageText = null;
 
-
-        void Awake()
-        {
-            _nowHealth = _maxHealth;
-        }
+        [SerializeField, Tooltip("ダメージをカウントアップするのにかかる時間")]
+        private float _uiUpdateTime = 2.0f;
 
         void Update()
         {
-            if (IsAlive() == false) return;
-
             RotatePlanet();
         }
-        
+
         /// <summary>
         /// 自転
         /// </summary>
@@ -51,32 +40,32 @@ namespace Planet
         {
             transform.Rotate(0, _rotateSpeed * Time.deltaTime, 0);
         }
-        
+
         /// <summary>
         /// 攻撃を受けたときのダメージ計算
         /// </summary>
         /// <param name="damage">攻撃者の攻撃力</param>
-        public void TakeDamage(float damage = 0)
+        public void TakeDamage(int damage = 0)
         {
             //体力が0以下ならリターン
-            if (IsAlive() == false) { return; }
+            if (GameManager.Instance.IsGame() == false) { return; }
 
-            //体力が0を下回るなら体力を0にする
-            _nowHealth = Mathf.Max(0, _nowHealth - damage);
-            
+            _damage += damage;
+            UpdateUI();
             //カメラを揺らす
-
-
-            //体力が0以下になったなら死亡
-            if (IsAlive() == false) { ExplodePlanet(); }
         }
 
         /// <summary>
-        /// 惑星爆発
+        /// UI表示更新
         /// </summary>
-        private void ExplodePlanet()
+        private void UpdateUI()
         {
-            Debug.Log("Dead");
+            //int damage = _damage;
+            //DOTween.To(
+            //    () => damage, (int a) => damage = a, _damage, _uiUpdateTime)
+            //    .OnUpdate(() => _damageText.text = damage.ToString());
+
+            _damageText.text = _damage.ToString();
         }
     }
 }

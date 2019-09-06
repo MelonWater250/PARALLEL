@@ -37,14 +37,19 @@ namespace Hole
         /// <summary>
         /// アイテム発射
         /// </summary>
-        /// <param name="items">アイテムの配列</param>
+        /// <param name="item">アイテムの配列</param>
         /// <param name="target">発射先</param>
-        public void Fire(ItemScript item, GameObject target)
+        /// <param name="attackPlayerNum">攻撃者のプレイヤー番号</param>
+        public void Fire(ItemScript item, GameObject target,int attackPlayerNum)
         {
             //発射先を向いて、パーティクル再生、拡大して発射
             _isFire = true;
             transform.LookAt(target.transform.position);
             _particle.Play();
+
+            //攻撃者のプレイヤー番号を登録
+            item.SetPlayerNum(attackPlayerNum);
+
             transform.DOScale(_baseScale, _scalingTime)
                 .OnComplete(() => StartCoroutine(FireCol(item, target)));
         }

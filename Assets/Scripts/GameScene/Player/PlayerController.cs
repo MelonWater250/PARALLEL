@@ -32,7 +32,6 @@ namespace Player
         private void Update()
         {
             if (GameManager.Instance.IsGame() == false) return;
-            if (_planetManager.IsAlive() == false) return;
             if (CanMove == false) return;
             
             InputKey();

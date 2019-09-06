@@ -25,15 +25,10 @@ namespace Item
 
         //管理用リスト
         private List<ItemScript> _itemBombList = new List<ItemScript>();
-
-        private void Start()
-        {
-            InstantiateItem();
-        }
+        
 
         //生成＆管理用リスト追加
-        [ContextMenu("InstantiateItem")]
-        private void InstantiateItem()
+        public void InstantiateItem()
         {
             //生成
             for (int i = 0; i < _itemAmountBomb; i++)
@@ -82,7 +77,6 @@ namespace Item
         }
 
         //全てのアイテムを爆発させて止める
-        [ContextMenu("ExplosionAllItem")]
         public void ExplosionAllItem()
         {
             foreach (ItemScript item in _itemBombList)

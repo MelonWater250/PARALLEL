@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Item;
+using Planet;
 
 namespace Hole
 {
@@ -14,17 +15,21 @@ namespace Hole
         [SerializeField, Tooltip("発射先(相手の惑星)")]
         private GameObject _targetObj = null;
 
-        [SerializeField,Tooltip("ブラックホールとつながっているホワイトホール")]
+        [SerializeField, Tooltip("ブラックホールとつながっているホワイトホール")]
         private WhiteHoleManager[] _whiteHoles = null;
 
         [SerializeField, Tooltip("ホワイトホールまでワープする時間")]
         private float _warpIntervalTime = 2.0f;
 
+        //攻撃者のプレイヤー番号呼び出し用
+        PlanetManager _planetManager = null;
+
         private void Start()
         {
+            _planetManager = GetComponentInParent<PlanetManager>();
             StartCoroutine(WarpItemUpdateCol());
         }
-        
+
         //Itemをホワイトホールに受け渡す(毎フレーム実行)
         private IEnumerator WarpItemUpdateCol()
         {
@@ -58,7 +63,7 @@ namespace Hole
                         if (targetWhiteHoleList.Count > 0)
                         {
                             int index = Random.Range(0, targetWhiteHoleList.Count);
-                            targetWhiteHoleList[index].Fire(fireItems[i], _targetObj);
+                            targetWhiteHoleList[index].Fire(fireItems[i], _targetObj, _planetManager.PlayerNum);
                         }
                         else
                         {

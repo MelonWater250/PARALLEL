@@ -43,6 +43,7 @@ namespace Item
         public int ItemID;
 
         //攻撃者のプレイヤー番号(スポーン時に書き換え)
+        [SerializeField]
         private int _attackPlayerNum = 1;
         public void SetPlayerNum(int playerNum) { _attackPlayerNum = playerNum; }
 
@@ -178,7 +179,7 @@ namespace Item
 
             while (CanMove() && GameManager.Instance.IsGame() && _isMove == true)
             {
-                Debug.Log(name + targetObj.name);
+                //Debug.Log(name + targetObj.name);
                 Vector3 targetDirection = targetObj.transform.position - transform.position + offsetPos;
                 _rb.AddForce(targetDirection.normalized * _defaultAcceleration * _speed * accelerator, ForceMode.Acceleration);
                 yield return new WaitForFixedUpdate();
@@ -187,24 +188,6 @@ namespace Item
 
             //移動中のエフェクト停止
             _movingParticle.Stop();
-        }
-
-        /// <summary>
-        /// 拡大
-        /// </summary>
-        public void ExpandingItem(float? time = null, Action OnCompleteAction = null)
-        {
-            if (time == null) time = _scallingTime;
-            transform.DOScale(_defaultScale, (float)time).OnComplete(() => OnCompleteAction());
-        }
-
-        /// <summary>
-        /// 縮小
-        /// </summary>
-        public void ShrinkItem(float? time = null, Action OnCompleteAction = null)
-        {
-            if (time == null) time = _scallingTime;
-            transform.DOScale(Vector3.zero, (float)time).OnComplete(() => OnCompleteAction());
         }
 
         /// <summary>
@@ -221,7 +204,8 @@ namespace Item
             }
 
             //縮小
-            ShrinkItem(_explosionTime);
+            transform.DOScale(Vector3.zero,_scallingTime);
+
             //爆発パーティクル生成
             _explosionParticle.Emit(_explosionParticleEmitCount);
             //パーティクル生成中は処理停止
@@ -231,25 +215,25 @@ namespace Item
             yield return null;
         }
 
-        private void OnTriggerStay(Collider other)
-        {
-            //爆発済ならリターン
-            if (_isExploded == true) return;
+        //private void OnTriggerStay(Collider other)
+        //{
+        //    //爆発済ならリターン
+        //    if (_isExploded == true) return;
 
-            if (other.tag == TagContainer.PLANET_TAG)
-            {
+        //    if (other.tag == TagContainer.PLANET_TAG)
+        //    {
                 
-                //StartCoroutine(ExplosionItemCol());
-                //PlanetManager planet = other.GetComponent<PlanetManager>();
+        //        //StartCoroutine(ExplosionItemCol());
+        //        //PlanetManager planet = other.GetComponent<PlanetManager>();
 
-                ////相手の惑星なら
-                //if (IsMine(planet.PlayerNum) == false)
-                //{
-                //    planet.TakeDamage(_power);
-                //    StartCoroutine(ExplosionItemCol());
-                //}
-            }
-        }
+        //        ////相手の惑星なら
+        //        //if (IsMine(planet.PlayerNum) == false)
+        //        //{
+        //        //    planet.TakeDamage(_power);
+        //        //    StartCoroutine(ExplosionItemCol());
+        //        //}
+        //    }
+        //}
 
         private void OnCollisionEnter(Collision collision)
         {

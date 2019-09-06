@@ -88,9 +88,12 @@ namespace Player
             if (other.tag == TagContainer.ITEM_TAG)
             {
                 ItemScript item = other.GetComponent<ItemScript>();
-                bool canPull = (item.CanMove() && item.IsMine(_playerNum));
+                bool canPull = (item.CanMove() && item.IsMine(_playerNum) == false);
                 if (canPull)
                 {
+                    //攻撃者のプレイヤー番号登録
+                    item.SetPlayerNum(_playerNum);
+
                     //近いほうのブラックホールを算出
                     float bh1_distance = Vector3.Magnitude(_blackHoles[0].transform.position - transform.position);
                     float bh2_distance = Vector3.Magnitude(_blackHoles[1].transform.position - transform.position);
