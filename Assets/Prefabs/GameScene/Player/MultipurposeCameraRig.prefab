@@ -77,8 +77,8 @@ Camera:
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.61960787, g: 0.6745098, b: 0.76862746, a: 0.019607844}
   m_projectionMatrixMode: 1
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
+  m_SensorSize: {x: 1, y: 1}
+  m_LensShift: {x: 1, y: 1}
   m_GateFitMode: 2
   m_FocalLength: 50
   m_NormalizedViewPortRect:
@@ -97,7 +97,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: b11f9aa1f3cfc3f49a311a671e9c3ea0, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0

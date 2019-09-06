@@ -42,9 +42,6 @@ namespace Player
         //球面移動の中心点
         protected PlanetManager _planetManager;
 
-        [SerializeField, Tooltip("アイテムを引き寄せるスピード(倍)")]
-        protected float _accelerator = 3.0f;
-
         [SerializeField, Tooltip("ブラックホールの位置")]
         protected GameObject[]  _blackHoles;
 
@@ -112,7 +109,7 @@ namespace Player
         /// <param name="target">発射先</param>
         protected virtual void ThrowItem(ItemScript item,GameObject target)
         {
-            item.MoveItem(target, accelerator: _accelerator);
+            item.MoveItem(target);
         }
     }
 }

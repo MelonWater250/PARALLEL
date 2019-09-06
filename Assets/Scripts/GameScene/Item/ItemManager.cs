@@ -18,20 +18,21 @@ namespace Item
         [SerializeField, Tooltip("最初にホワイトホールから生成する数\n(_itemAmountBombの2分の1以下)")]
         private int _firstSpawnAmount = 5;
 
-        [SerializeField,Tooltip("ワープマネージャー(初回アイテム生成用)")]
-        private HoleManager _warpManager_1 = null;
+        [SerializeField, Tooltip("ホールマネージャー(初回アイテム生成用)")]
+        private HoleManager _holeManager_1 = null;
         [SerializeField, Tooltip("ワープマネージャー(初回アイテム生成用)")]
-        private HoleManager _warpManager_2 = null;
+        private HoleManager _holeManager_2 = null;
 
         //管理用リスト
         private List<ItemScript> _itemBombList = new List<ItemScript>();
 
         private void Start()
         {
-            //InstantiateItem();
+            InstantiateItem();
         }
 
         //生成＆管理用リスト追加
+        [ContextMenu("InstantiateItem")]
         private void InstantiateItem()
         {
             //生成
@@ -40,6 +41,7 @@ namespace Item
                 ItemScript item = Instantiate(_itemBomb).GetComponent<ItemScript>();
                 item.Init(i);
                 item.gameObject.SetActive(false);
+                item.name += ":" + i;
                 _itemBombList.Add(item);
             }
 
@@ -49,13 +51,12 @@ namespace Item
                 //偶数と奇数交互に代入
                 if (i % 2 == 0)
                 {
-                    _warpManager_1.AddItem(_itemBombList[i]);
+                    _holeManager_1.AddItem(_itemBombList[i]);
                 }
                 else
                 {
-                    _warpManager_2.AddItem(_itemBombList[i]);
+                    _holeManager_2.AddItem(_itemBombList[i]);
                 }
-
             }
         }
 
@@ -81,6 +82,7 @@ namespace Item
         }
 
         //全てのアイテムを爆発させて止める
+        [ContextMenu("ExplosionAllItem")]
         public void ExplosionAllItem()
         {
             foreach (ItemScript item in _itemBombList)

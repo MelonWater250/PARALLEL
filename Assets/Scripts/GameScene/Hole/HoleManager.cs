@@ -8,42 +8,68 @@ namespace Hole
     //ブラックホールとホワイトホール間のアイテムの受け渡し
     public class HoleManager : MonoBehaviour
     {
+        //発射予定のアイテムのリスト(ブラックホールから受け取り)
         private List<ItemScript> _itemList = new List<ItemScript>();
 
         [SerializeField, Tooltip("発射先(相手の惑星)")]
         private GameObject _targetObj = null;
 
-        [SerializeField]
+        [SerializeField,Tooltip("ブラックホールとつながっているホワイトホール")]
         private WhiteHoleManager[] _whiteHoles = null;
 
-        private void Update()
-        {
-            if( _itemList.Count > 0)
-            {
-                ////発射候補のアイテムリストにコピー
-                //List<BombScript> fireItemList = new List<BombScript>(_itemList);
-                //_itemList.Clear();
+        [SerializeField, Tooltip("ホワイトホールまでワープする時間")]
+        private float _warpIntervalTime = 2.0f;
 
-                //発射中でないWhiteHoleManagerを探す
-                List<WhiteHoleManager> targetWhiteHoleList = new List<WhiteHoleManager>();
-                foreach (WhiteHoleManager target in _whiteHoles)
+        private void Start()
+        {
+            StartCoroutine(WarpItemUpdateCol());
+        }
+        
+        //Itemをホワイトホールに受け渡す(毎フレーム実行)
+        private IEnumerator WarpItemUpdateCol()
+        {
+            //ゲーム中ならループ
+            while (GameManager.Instance.IsGame() == true)
+            {
+                //発射予定のアイテムが1つ以上あるなら
+                if (_itemList.Count > 0)
                 {
-                    if (target.IsFire() == false)
+                    //発射準備のアイテム配列に代入してクリア
+                    List<ItemScript> fireItems = new List<ItemScript>(_itemList);
+                    _itemList.Clear();
+
+                    //すべてのアイテムを発射準備
+                    for (int i = 0; i < fireItems.Count; i++)
                     {
-                        targetWhiteHoleList.Add(target);
+                        //発射中でないホワイトホールを探す
+                        List<WhiteHoleManager> targetWhiteHoleList = new List<WhiteHoleManager>();
+                        for (int j = 0; j < _whiteHoles.Length; j++)
+                        {
+                            //発射中じゃないなら
+                            if (_whiteHoles[j].IsFire() == false)
+                            {
+                                //リストに追加
+                                targetWhiteHoleList.Add(_whiteHoles[j]);
+                            }
+                        }
+
+                        //発射中じゃないホワイトホールが見つかったら発射(候補の中からランダムで選出)
+                        //発射するアイテム以外は配列に戻す
+                        if (targetWhiteHoleList.Count > 0)
+                        {
+                            int index = Random.Range(0, targetWhiteHoleList.Count);
+                            targetWhiteHoleList[index].Fire(fireItems[i], _targetObj);
+                        }
+                        else
+                        {
+                            //発射中じゃないホワイトホールが見つからなかったら
+                            //発射予定のアイテムのリストに返す
+                            _itemList.Add(fireItems[i]);
+                        }
                     }
                 }
-
-                //見つかったら発射(候補の中からランダムで選出)
-                //発射するアイテム以外は配列に戻す
-                if (targetWhiteHoleList.Count > 0)
-                {
-                    int index = Random.Range(0, targetWhiteHoleList.Count);
-                    WhiteHoleManager targetWhiteHole = _whiteHoles[index];
-                    //targetWhiteHole.Fire(fireItemList.ToArray(), _targetObj);
-                    targetWhiteHole.Fire(_itemList[0], _targetObj);
-                    _itemList.RemoveAt(0);
-                }
+                //一定時間処理停止
+                yield return new WaitForSeconds(_warpIntervalTime);
             }
         }
 

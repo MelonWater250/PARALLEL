@@ -23,7 +23,6 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     private void GameStart()
     {
-        Debug.Log("GameStart!");
         _planetManager_1.GetComponentInChildren<PlayerBase>().CanMove = true;
         _planetManager_2.GetComponentInChildren<PlayerBase>().CanMove = true;
         StartCoroutine(UpdateGameCol());

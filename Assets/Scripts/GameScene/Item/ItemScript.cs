@@ -49,11 +49,15 @@ namespace Item
         public bool IsMine(int playerNum) { return playerNum == _attackPlayerNum ? true : false; }
 
         [Header("メインパラメーター")]
-        [SerializeField, Tooltip("アイテム拡縮にかかる時間")]
-        private float _scallingTime = 0.5f;
+        [SerializeField,Tooltip("移動速度の倍率(Default:1.0)")]
+        private float _speed = 1.0f;
 
         [SerializeField, Tooltip("攻撃力")]
         private float _power = 10.0f;
+
+        [SerializeField, Tooltip("アイテム拡縮にかかる時間")]
+        private float _scallingTime = 0.5f;
+
 
         [SerializeField, Tooltip("カウントダウン時間")]
         private float _lifeTime = 10.0f;
@@ -126,10 +130,6 @@ namespace Item
 
             StartCoroutine(CountDown());
         }
-        private void Update()
-        {
-            Debug.Log(name + _movingParticle.IsAlive());
-        }
         //爆発のカウントダウン
         private IEnumerator CountDown()
         {
@@ -137,7 +137,7 @@ namespace Item
             while (time > 0)
             {
                 //カウントダウン中なら処理
-                if (_isCountdown == false)
+                if (_isCountdown == true)
                 {
                     //スケール拡大
                     transform.localScale = Vector3.Lerp(_bombScale, _defaultScale, time / _lifeTime);
@@ -169,7 +169,7 @@ namespace Item
             transform.parent = null;
             MoveCol = StartCoroutine(MoveItemCol(targetObj ,(Vector3)offset ,accelerator));
         }
-        private IEnumerator MoveItemCol(GameObject targetObj, Vector3 offsetPos, float accelerator = 1.0f)
+        private IEnumerator MoveItemCol(GameObject targetObj, Vector3 offsetPos, float accelerator)
         {
             _isMove = true;
 
@@ -179,8 +179,8 @@ namespace Item
             while (CanMove() && GameManager.Instance.IsGame() && _isMove == true)
             {
                 Debug.Log(name + targetObj.name);
-                Vector3 targetPos = targetObj.transform.position - transform.position +offsetPos;
-                _rb.AddForce(targetPos.normalized * _defaultAcceleration * accelerator, ForceMode.Acceleration);
+                Vector3 targetDirection = targetObj.transform.position - transform.position + offsetPos;
+                _rb.AddForce(targetDirection.normalized * _defaultAcceleration * _speed * accelerator, ForceMode.Acceleration);
                 yield return new WaitForFixedUpdate();
                 //yield return null;
             }
@@ -217,7 +217,7 @@ namespace Item
 
             if(planetManager != null)
             {
-                planetManager.TakeDamage(_power);
+                //planetManager.TakeDamage(_power);
             }
 
             //縮小
@@ -255,7 +255,7 @@ namespace Item
         {
             if(collision.gameObject.tag == TagContainer.PLANET_TAG)
             {
-                //カウントダウン開始
+                //カウントダウン再開
                 _isCountdown = true;
                 StopMove();
             }
