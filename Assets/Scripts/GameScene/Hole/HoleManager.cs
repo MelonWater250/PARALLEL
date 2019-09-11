@@ -27,14 +27,14 @@ namespace Hole
         private void Start()
         {
             _planetManager = GetComponentInParent<PlanetManager>();
-            StartCoroutine(WarpItemUpdateCol());
+            //StartCoroutine(WarpItemUpdateCol());
         }
 
         //Itemをホワイトホールに受け渡す(毎フレーム実行)
-        private IEnumerator WarpItemUpdateCol()
+        private void  Update/*IEnumerator WarpItemUpdateCol*/()
         {
             //ゲーム中ならループ
-            while (GameManager.Instance.IsGame() == true)
+            if (GameManager.Instance.IsGame() == true)
             {
                 //発射予定のアイテムが1つ以上あるなら
                 if (_itemList.Count > 0)
@@ -69,12 +69,14 @@ namespace Hole
                         {
                             //発射中じゃないホワイトホールが見つからなかったら
                             //発射予定のアイテムのリストに返す
+                            fireItems[i].gameObject.SetActive(false);
                             _itemList.Add(fireItems[i]);
                         }
                     }
                 }
                 //一定時間処理停止
-                yield return new WaitForSeconds(_warpIntervalTime);
+                //yield return new WaitForSeconds(_warpIntervalTime);
+                //yield return null;
             }
         }
 

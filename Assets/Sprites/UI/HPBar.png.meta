@@ -116,9 +116,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 810
+        y: 753
         width: 1080
-        height: 270
+        height: 269
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -136,7 +136,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 515
+        y: 456
         width: 1080
         height: 272
       alignment: 0
@@ -156,7 +156,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 320
+        y: 262
         width: 916
         height: 171
       alignment: 0
@@ -176,7 +176,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 919
-        y: 287
+        y: 229
         width: 161
         height: 206
       alignment: 0
@@ -196,7 +196,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 91
+        y: 32
         width: 915
         height: 171
       alignment: 0
@@ -215,8 +215,8 @@ TextureImporter:
       name: HPBar_mini2
       rect:
         serializedVersion: 2
-        x: 915
-        y: 58
+        x: 918
+        y: 0
         width: 162
         height: 206
       alignment: 0

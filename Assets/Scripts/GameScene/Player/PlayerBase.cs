@@ -88,7 +88,7 @@ namespace Player
             if (other.tag == TagContainer.ITEM_TAG)
             {
                 ItemScript item = other.GetComponent<ItemScript>();
-                bool canPull = (item.CanMove() && item.IsMine(_playerNum) == false);
+                bool canPull = (item.CanMove()/* && item.IsMine(_playerNum) == false*/);
                 if (canPull)
                 {
                     //攻撃者のプレイヤー番号登録

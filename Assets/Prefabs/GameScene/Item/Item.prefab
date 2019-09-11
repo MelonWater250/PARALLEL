@@ -4825,18 +4825,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cea1abb20430c704c83b8f8441c1d6c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ItemID: 0
+  IsActive: 0
+  IsCountdown: 0
   _attackPlayerNum: 1
-  _speed: 10
+  _speed: 1
   _power: 10
   _scallingTime: 0.5
-  _lifeTime: 10
-  _bombScale: {x: 2, y: 2, z: 2}
-  _bombColor: {r: 0.938, g: 0.20542204, b: 0.20542204, a: 1}
+  _lifeTime: 5
+  _itemScale: {x: 2, y: 2, z: 2}
+  _defaultColor: {r: 0.14, g: 0.14, b: 0.14, a: 1}
+  _itemColor: {r: 0.95, g: 0.15, b: 0.15, a: 1}
   _bodyMeshRenderer: {fileID: 8035354581572728492}
+  _explosionRadius: 5
   _explosionParticle: {fileID: 988649516632462823}
-  _explosionParticleEmitCount: 30
-  _explosionTime: 0.05
+  _explosionParticleEmitCount: 10
   _movingParticle: {fileID: 5217491840123609297}
 --- !u!135 &6873803047803096263
 SphereCollider:

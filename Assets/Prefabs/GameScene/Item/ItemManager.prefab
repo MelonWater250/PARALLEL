@@ -43,9 +43,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc9e1aba2285c648b64a12f75fca216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemAmountBomb: 15
-  _itemBomb: {fileID: 8035354581011680440, guid: bc20f1c52d017064285a5f8702811cae,
-    type: 3}
-  _firstSpawnAmount: 2
+  _item: {fileID: 8035354581011680440, guid: bc20f1c52d017064285a5f8702811cae, type: 3}
+  _firstInstantiateItemAmount: 20
+  _firstUseItemAmount: 1
+  _increaseExplodeItemAmount: 4
+  _increaseItemAmount: 2
   _holeManager_1: {fileID: 0}
   _holeManager_2: {fileID: 0}

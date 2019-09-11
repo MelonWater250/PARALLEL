@@ -4,16 +4,9 @@ using UnityEngine;
 using Planet;
 using Player;
 using Item;
-using UnityEngine.UI;
 
 public class GameManager : SingletonMonoBehaviour<GameManager>
 {
-    //ゲーム終了時のメッセージ(勝者)
-    private static readonly string MESSAGE_WINNER = "Player{0} WIN!";
-
-    //ゲーム終了時のメッセージ(引き分け)
-    private static readonly string MESSAGE_DRAW = "Draw!";
-
     //ゲームの状態Enum
     public enum GameStateEnum
     {
@@ -27,32 +20,14 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     //ゲーム中か
     public bool IsGame() { return GameState() == GameStateEnum.Gaming; }
-
+    
 
     [Header("ステータス")]
-    [SerializeField, Tooltip("ゲーム時間(秒)")]
-    private float _gameTime = 90.0f;
+    //[SerializeField, Tooltip("ゲーム時間(秒)")]
+    //private float _gameTime = 90.0f;
+    //public float GameTime() { return _gameTime; }
 
-
-    [Header("UI")]
-    [SerializeField, Tooltip("勝者名表示用Text")]
-    private Text _resultText = null;
-
-    [SerializeField, Tooltip("ゲーム終了時に表示するタイトル遷移UI")]
-    private GameObject _toTitleImage = null;
-
-    [SerializeField, Tooltip("制限時間常時表示用テキスト")]
-    private Text _gameTimeText = null;
-
-    [SerializeField, Tooltip("制限時間常時表示用スライダー")]
-    private Slider _gameTimeSlider = null;
-
-    [SerializeField, Tooltip("制限時間が一定以下になったときに表示するテキスト")]
-    private Text[] _gameTimeBigTexts = null;
-
-    [SerializeField, Tooltip("残り何秒からBigTextをプレイヤーに表示するか")]
-    private float _beginDisplayBigTextMaxTime = 10;
-
+    
     [Header("コンポーネント")]
     [SerializeField, Tooltip("惑星(1P)")]
     private PlanetManager _planetManager_1 = null;
@@ -60,71 +35,72 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     [SerializeField, Tooltip("惑星(2P)")]
     private PlanetManager _planetManager_2 = null;
 
+    [Header("プレイヤーの体力関連")]
+    [Tooltip("惑星の初期体力")]
+    public int MaxPlanetHealth = 100;
+
+
     private void Start()
     {
-        _toTitleImage.SetActive(false);
-        _resultText.gameObject.SetActive(false);
-        _gameTimeSlider.minValue = 0;
-        _gameTimeSlider.maxValue = _gameTime;
-        _gameTimeSlider.value = _gameTimeSlider.maxValue;
-        for (int i = 0; i < _gameTimeBigTexts.Length; i++)
-        {
-            _gameTimeBigTexts[i].gameObject.SetActive(false);
-        }
 
+        _planetManager_1.PlayerNum = 1;
+        _planetManager_2.PlayerNum = 2;
 
-        GameStart();
+        //UI初期化
+        UIManager.Instance.InitUI();
+        //UI更新
+        //UIManager.Instance.UpdateGameTimeUI(_gameTime);
+        //初回アイテム生成&プーリング
+        ItemManager.Instance.InitItem();
     }
 
-    /// <summary>
-    /// ゲームのループ
-    /// </summary>
     private IEnumerator UpdateGameCol()
     {
-        //残り時間が0になるまでループ
-        float time = _gameTime;
-        while (time > 0)
+        //どちらかが死んでいたら
+        bool isGame = _planetManager_1.IsAlive() && _planetManager_2.IsAlive();
+        Debug.Log(_planetManager_1.IsAlive());
+        while (isGame == true&& _gameState == GameStateEnum.Gaming)
         {
-            time -= Time.deltaTime;
-
-            //制限時間のテキスト移動、表示更新
-            _gameTimeSlider.value = time;
-            _gameTimeText.text = ((int)time).ToString();
-
-            //一定時間以下ならそれぞれのプレイヤー画面に残り時間を表示する
-            if (time < _beginDisplayBigTextMaxTime)
-            {
-                //プレイヤー用タイムテキスト表示
-                for (int i = 0; i < _gameTimeBigTexts.Length; i++)
-                {
-                    if(_gameTimeBigTexts[i].gameObject.activeSelf == false)
-                    {
-                        _gameTimeBigTexts[i].gameObject.SetActive(true);
-                    }
-                }
-
-                DisplayBigText(time);
-            }
-
+            //どちらかが死んでいたら
+            isGame = _planetManager_1.IsAlive() && _planetManager_2.IsAlive();
+            Debug.Log("Game");
             yield return null;
         }
-
         //ゲーム終了
         GameOver();
+        Debug.Log("GameOver");
     }
+
+    ///// <summary>
+    ///// ゲームのループ
+    ///// </summary>
+    //private IEnumerator UpdateGameCol()
+    //{
+    //    //残り時間が0になるまでループ
+    //    float time = _gameTime;
+    //    while (time > 0)
+    //    {
+    //        time -= Time.deltaTime;
+
+    //        //UI更新
+    //        UIManager.Instance.UpdateGameTimeUI(time);
+    //        yield return null;
+    //    }
+
+    //    //ゲーム終了
+    //    GameOver();
+    //}
 
     /// <summary>
     /// ゲーム開始
     /// </summary>
-    private void GameStart()
+    public void GameStart()
     {
         _gameState = GameStateEnum.Gaming;
 
         _planetManager_1.GetComponentInChildren<PlayerBase>().CanMove = true;
         _planetManager_2.GetComponentInChildren<PlayerBase>().CanMove = true;
-
-        //初回アイテム生成&プーリング
-        ItemManager.Instance.InstantiateItem();
+        
         //ゲーム開始
         StartCoroutine(UpdateGameCol());
     }
@@ -139,55 +115,44 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         //すべてのアイテムを爆破
         ItemManager.Instance.ExplosionAllItem();
 
-        //ボタン表示
-        _toTitleImage.gameObject.SetActive(true);
+        //UI表示
+        UIManager.Instance.DisplayGameOverUI(WinPlayerNum());
+
+        UIAnimationScript.Instance.StartGameOverAnimation();
 
         //終了サウンド再生用
         //.PlayOneShot(AudioContainer.Instance.EndFightSound);
-
-
-        //勝負結果を表示
-        _resultText.text = ResultText();
-        _resultText.gameObject.SetActive(true);
-
-        _toTitleImage.SetActive(true);
-        _resultText.gameObject.SetActive(true);
     }
 
-    /// <summary>
-    /// それぞれのプレイヤー画面に残り時間を表示する
-    /// </summary>
-    private void DisplayBigText(float time)
-    {
-        for (int i = 0; i < _gameTimeBigTexts.Length; i++)
-        {
-            _gameTimeBigTexts[i].text = ((int)time).ToString();
-
-            //小数でアルファ値を変化
-            Color newColor = _gameTimeBigTexts[i].color;
-            //1で割ったあまり＝小数点以下の値のみ
-            float fraction = time % 1;
-            newColor.a = Mathf.Lerp(0, 1, fraction);
-            _gameTimeBigTexts[i].color = newColor;
-        }
-    }
 
     /// <summary>
-    /// 勝ったほうのプレイヤー(引き分けならドロー)
+    /// 勝ったほうのプレイヤー番号(引き分けなら0)
     /// </summary>
-    private string ResultText()
+    private int WinPlayerNum()
     {
-        if (_planetManager_1.Damage() > _planetManager_2.Damage())
+        //if (_planetManager_1.Damage() > _planetManager_2.Damage())
+        //{
+        //    return 1;
+        //}
+        //else if (_planetManager_1.Damage() < _planetManager_2.Damage())
+        //{
+        //    return 2;
+        //}
+        //else
+        //{
+        //    return 0;
+        //}
+        if (_planetManager_1.IsAlive() && _planetManager_2.IsAlive())
         {
-            return string.Format(MESSAGE_WINNER, 1);
+            return 0;
         }
-        else if (_planetManager_1.Damage() < _planetManager_2.Damage())
+        else if (_planetManager_1.IsAlive())
         {
-            return string.Format(MESSAGE_WINNER, 2);
+            return 1;
         }
         else
         {
-            return MESSAGE_DRAW;
+            return 2;
         }
     }
 }

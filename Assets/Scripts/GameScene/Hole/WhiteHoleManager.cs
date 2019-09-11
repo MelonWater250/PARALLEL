@@ -31,7 +31,6 @@ namespace Hole
             _particle = GetComponentInChildren<ParticleSystem>();
             _particle.Stop();
             _baseScale = transform.localScale;
-
         }
 
         /// <summary>
@@ -40,7 +39,7 @@ namespace Hole
         /// <param name="item">アイテムの配列</param>
         /// <param name="target">発射先</param>
         /// <param name="attackPlayerNum">攻撃者のプレイヤー番号</param>
-        public void Fire(ItemScript item, GameObject target,int attackPlayerNum)
+        public void Fire(ItemScript item, GameObject target, int attackPlayerNum)
         {
             //発射先を向いて、パーティクル再生、拡大して発射
             _isFire = true;
@@ -50,21 +49,20 @@ namespace Hole
             //攻撃者のプレイヤー番号を登録
             item.SetPlayerNum(attackPlayerNum);
 
+            //拡大
             transform.DOScale(_baseScale, _scalingTime)
-                .OnComplete(() => StartCoroutine(FireCol(item, target)));
-        }
+                .OnComplete(
+               () =>
+               {
+                   //位置＆向き変更
+                   item.transform.position = transform.position;
+                   item.transform.up = (transform.position - target.transform.position).normalized;
+                   item.gameObject.SetActive(true);
+                   item.MoveItem(target);
 
-        private IEnumerator FireCol(ItemScript item, GameObject target)
-        {
-            item.transform.position = transform.position;
-            item.transform.up = (transform.position - target.transform.position).normalized;
-            item.gameObject.SetActive(true);
-            item.MoveItem(target);
-            yield return new WaitForSeconds(_fireIntervalTime);
-            
-            transform.DOScale(Vector3.zero, _scalingTime)
-                .OnComplete(() => _isFire = false);
-            yield return null;
+                   transform.DOScale(Vector3.zero, _scalingTime)
+                       .OnComplete(() => _isFire = false);
+               });
         }
     }
 }
