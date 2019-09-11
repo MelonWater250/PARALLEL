@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Sound;
 
 /// <summary>
 /// シーン管理、遷移処理
@@ -12,9 +13,9 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
     const string SUBMIT_KEY = "Submit";
 
     //タイトルシーン
-    private static readonly string TITLESCENE = "TitleScene";
+    private const string TITLESCENE = "TitleScene";
     //ゲームシーン
-    private static readonly string GAMESCENE = "GameScene";
+    private const string GAMESCENE = "GameScene";
 
     private string NowScene = TITLESCENE;
 
@@ -23,12 +24,6 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
 
     [SerializeField, Tooltip("フェードイン・アウト時間")]
     private float _fadeTime = 1.0f;
-
-    [SerializeField, Tooltip("決定サウンド再生用")]
-    private AudioSource _submitSESource = null;
-
-    [SerializeField, Tooltip("BGM再生用")]
-    private AudioSource _BGMSource = null;
 
     private static SceneManagerScript _sceneManagerScript = null;
 
@@ -50,19 +45,19 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
         SceneManager.sceneLoaded += (nextScene, mode) => SceneLoaded(nextScene, mode);
 
         _fade = GetComponentInChildren<Fade>();
-    }
 
-
-
-    void Start()
-    {
-        //_BGMSource.clip = AudioContainer.Instance.BGM_Title;
-        //_BGMSource.Play();
-
-        //_submitSESource = _submitSESource.GetComponent<AudioSource>();
-        //_BGMSource = _BGMSource.GetComponent<AudioSource>();
-
-        //_submitSESource.clip = AudioContainer.Instance.ClickSound;
+        switch (NowScene)
+        {
+            case TITLESCENE:
+                SoundManager.Instance.StartBGMSound(SoundManager.PlayingBGMClipEnum.TitleBGM);
+                break;
+            case GAMESCENE:
+                SoundManager.Instance.StartBGMSound(SoundManager.PlayingBGMClipEnum.GameBGM);
+                break;
+            default:
+                SoundManager.Instance.StartBGMSound(SoundManager.PlayingBGMClipEnum.TitleBGM);
+                break;
+        }
     }
 
     //シーンが遷移したとき呼ばれる
@@ -71,6 +66,18 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
     {
         //フェードアウト
         _fade.FadeOut(_fadeTime);
+        switch (NowScene)
+        {
+            case TITLESCENE:
+                SoundManager.Instance.StartBGMSound(SoundManager.PlayingBGMClipEnum.TitleBGM);
+                break;
+            case GAMESCENE:
+                SoundManager.Instance.StartBGMSound(SoundManager.PlayingBGMClipEnum.GameBGM);
+                break;
+            default:
+                SoundManager.Instance.StartBGMSound(SoundManager.PlayingBGMClipEnum.TitleBGM);
+                break;
+        }
     }
 
     /// <summary>
@@ -84,10 +91,6 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
         {
             SceneManager.LoadScene(TITLESCENE);
             NowScene = TITLESCENE;
-
-            //_BGMSource.Stop();
-            //_BGMSource.clip = AudioContainer.Instance.BGM_Title;
-            //_BGMSource.Play();
         });
     }
 
@@ -104,10 +107,6 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
         {
             SceneManager.LoadScene(GAMESCENE);
             NowScene = GAMESCENE;
-
-            //_BGMSource.Stop();
-            //_BGMSource.clip = AudioContainer.Instance.BGM_Game;
-            //_BGMSource.Play();
         });
     }
 
@@ -133,19 +132,19 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
         {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown(SUBMIT_KEY))
             {
-                //_submitSESource.Play();
+                SoundManager.Instance.StartSceneChangeSE();
                 LoadGameScene();
             }
         }
-        ////ゲームシーン中で、勝敗が決まっている時に
-        ////スペースキー、Xboxの決定キーのどれかが押されたらタイトルシーンへ遷移
-        //else if (NowScene == GAMESCENE && GameManager.Instance.GameState() == GameManager.GameStateEnum.EndGame)
-        //{
-        //    if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown(SUBMIT_KEY))
-        //    {
-        //        _submitSESource.Play();
-        //        LoadTitleScene();
-        //    }
-        //}
+        //ゲームシーン中で、勝敗が決まっている時に
+        //スペースキー、Xboxの決定キーのどれかが押されたらタイトルシーンへ遷移
+        else if (NowScene == GAMESCENE && GameManager.Instance.GameState() == GameManager.GameStateEnum.GameOver)
+        {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown(SUBMIT_KEY))
+            {
+                SoundManager.Instance.StartSceneChangeSE();
+                LoadTitleScene();
+            }
+        }
     }
 }

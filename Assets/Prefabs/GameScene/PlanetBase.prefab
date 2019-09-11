@@ -109,7 +109,7 @@ MonoBehaviour:
   - {fileID: 0}
   _DamageDurationTime: 2
   _camera: {fileID: 5071682109581935277}
-  _cameraShakeTime: 0.5
+  _cameraShakeTime: 0.3
   _cameraShakeStrength: 0.3
 --- !u!135 &6186738482170281679
 SphereCollider:

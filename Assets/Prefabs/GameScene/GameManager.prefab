@@ -43,14 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df780408e1c629b4eab1f10480d8fe4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameTime: 15
-  _resultText: {fileID: 0}
-  _toTitleImage: {fileID: 0}
-  _gameTimeText: {fileID: 0}
-  _gameTimeSlider: {fileID: 0}
-  _gameTimeBigTexts:
-  - {fileID: 0}
-  - {fileID: 0}
-  _beginDisplayBigTextMaxTime: 10
   _planetManager_1: {fileID: 0}
   _planetManager_2: {fileID: 0}
+  MaxPlanetHealth: 200

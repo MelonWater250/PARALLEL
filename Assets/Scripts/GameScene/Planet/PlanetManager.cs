@@ -46,7 +46,7 @@ namespace Planet
         private Camera _camera = null;
 
         [SerializeField, Tooltip("ダメージを受けたときの揺れの時間")]
-        private float _cameraShakeTime = 0.5f;
+        private float _cameraShakeTime = 0.3f;
 
         [SerializeField, Tooltip("ダメージを受けたときの揺れの強さ")]
         private float _cameraShakeStrength = 0.3f;

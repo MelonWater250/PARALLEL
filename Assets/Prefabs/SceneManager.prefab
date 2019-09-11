@@ -333,8 +333,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fadeTime: 1
-  _submitSESource: {fileID: 0}
-  _BGMSource: {fileID: 0}
 --- !u!82 &340570185482488773
 AudioSource:
   m_ObjectHideFlags: 0

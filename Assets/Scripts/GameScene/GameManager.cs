@@ -4,6 +4,7 @@ using UnityEngine;
 using Planet;
 using Player;
 using Item;
+using Sound;
 
 public class GameManager : SingletonMonoBehaviour<GameManager>
 {
@@ -42,7 +43,6 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     private void Start()
     {
-
         _planetManager_1.PlayerNum = 1;
         _planetManager_2.PlayerNum = 2;
 
@@ -58,17 +58,14 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     {
         //どちらかが死んでいたら
         bool isGame = _planetManager_1.IsAlive() && _planetManager_2.IsAlive();
-        Debug.Log(_planetManager_1.IsAlive());
         while (isGame == true&& _gameState == GameStateEnum.Gaming)
         {
             //どちらかが死んでいたら
             isGame = _planetManager_1.IsAlive() && _planetManager_2.IsAlive();
-            Debug.Log("Game");
             yield return null;
         }
         //ゲーム終了
         GameOver();
-        Debug.Log("GameOver");
     }
 
     ///// <summary>
@@ -121,7 +118,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         UIAnimationScript.Instance.StartGameOverAnimation();
 
         //終了サウンド再生用
-        //.PlayOneShot(AudioContainer.Instance.EndFightSound);
+        SoundManager.Instance.StartGameOverSE();
     }
 
 
