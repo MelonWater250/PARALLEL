@@ -9,6 +9,7 @@ using Sound;
 /// </summary>
 public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
 {
+    //string test = "TestScene";
     //決定キーのキーコード
     const string SUBMIT_KEY = "Submit";
 
@@ -16,6 +17,7 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
     private const string TITLESCENE = "TitleScene";
     //ゲームシーン
     private const string GAMESCENE = "GameScene";
+
 
     private string NowScene = TITLESCENE;
 
@@ -79,6 +81,16 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
                 break;
         }
     }
+    //public void LoadTestScene()
+    //{
+    //    //_fadeTime秒かけてフェードイン、その後シーン遷移
+    //    _fade.FadeIn(_fadeTime,
+    //    () =>
+    //    {
+    //        SceneManager.LoadScene(test);
+    //        NowScene = TITLESCENE;
+    //    });
+    //}
 
     /// <summary>
     /// タイトルシーン遷移
@@ -109,8 +121,7 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
             NowScene = GAMESCENE;
         });
     }
-
-
+    
     void Update()
     {
         //F1キーでタイトルシーンへ
@@ -118,6 +129,7 @@ public class SceneManagerScript : SingletonMonoBehaviour<SceneManagerScript>
         {
             //_submitSESource.Play();
             LoadTitleScene();
+            //LoadTestScene();
         }
         //F2キーでゲームシーンへ
         else if (Input.GetKeyDown(KeyCode.F2))

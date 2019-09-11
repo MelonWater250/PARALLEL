@@ -67,7 +67,6 @@ namespace Sound
             }
             //再生
             _BGMSource.Play();
-            Debug.Log("Play");
         }
 
         /// <summary>

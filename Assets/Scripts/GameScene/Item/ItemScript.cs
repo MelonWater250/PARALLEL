@@ -4,6 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 using Planet;
+using Sound;
 
 namespace Item
 {
@@ -108,6 +109,9 @@ namespace Item
         //移動コルーチン保持用
         private Coroutine MoveCol = null;
 
+        private AudioSource _audioSource = null;
+        private AudioClip _clip = null;
+
         /// <summary>
         /// 初期化
         /// </summary>
@@ -157,6 +161,9 @@ namespace Item
             //移動中のエフェクト停止
             _movingParticle.loop = false;
             _movingParticle.Stop();
+
+            _audioSource = GetComponent<AudioSource>();
+            _clip = SoundManager.Instance.ExplosionSound;
         }
 
         //爆発のカウントダウン
@@ -230,6 +237,9 @@ namespace Item
 
             //縮小
             transform.DOScale(Vector3.zero, _scallingTime);
+
+            //爆発SE再生
+            _audioSource.PlayOneShot(_clip);
 
             //爆発パーティクル生成
             _explosionParticle.Emit(_explosionParticleEmitCount);
